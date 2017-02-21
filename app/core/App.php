@@ -7,11 +7,13 @@ class App
     private $method = 'index';
     private $params = [];
 
-    protected function getController(){
+    protected function getController()
+    {
         return $this->controller;
     }
 
-    protected function setController($newController){
+    protected function setController($newController)
+    {
         return $this->controller = $newController;
     }
 
@@ -19,14 +21,28 @@ class App
     {
         $url = $this->parseUrl();
         $controllerName = $url[0];
+        $methodName = $url[1];
 
         if (Controller::withNameExists($controllerName)) {
-            $this->setController($controllerName);
+            $this->controller = $controllerName;
         }
 
         require_once Controller::getControllerPathByName($this->controller);
+
+        $this->controller = new $this->controller;
+
+        if ($this->controller->hasMethode($methodName)) {
+            $this->method = $methodName;
+        } else {
+            echo 'no method ' . $methodName . ', ';
+        }
+
+        echo 'use method ' . $controllerName . '::' . $this->method;
     }
 
+    /**
+     * @return array
+     */
     public function parseUrl()
     {
         if (isset($_GET['url'])) {
