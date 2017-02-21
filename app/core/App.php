@@ -24,7 +24,7 @@ class App
             $this->setController($controllerName);
         }
 
-        require_once Controller::getControllerPathByName($controllerName);
+        require_once Controller::getControllerPathByName($this->controller);
     }
 
     public function parseUrl()
