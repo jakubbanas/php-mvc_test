@@ -1,10 +1,13 @@
 <?php
 
+define("DEFAULT_CONTROLLER", "home");
+define("DEFAULT_METHOD", "index");
+
 class App
 {
 
-    private $controller = 'home';
-    private $method = 'index';
+    private $controller;
+    private $method;
     private $params = [];
 
     protected function getController()
@@ -19,25 +22,24 @@ class App
 
     public function __construct()
     {
+        //Get url parameters
         $url = $this->parseUrl();
-        $controllerName = $url[0];
-        $methodName = $url[1];
 
-        if (Controller::withNameExists($controllerName)) {
-            $this->controller = $controllerName;
+        //Parse first parameter (controller)
+        if (isset($url[0])) {
+            $controllerName = $url[0];
+            $this->controller = Controller::withNameExists($controllerName) ? $controllerName : DEFAULT_CONTROLLER;
+            require_once Controller::getControllerPathByName($this->controller);
         }
-
-        require_once Controller::getControllerPathByName($this->controller);
 
         $this->controller = new $this->controller;
 
-        if ($this->controller->hasMethode($methodName)) {
-            $this->method = $methodName;
-        } else {
-            echo 'no method ' . $methodName . ', ';
+        //Parse second parameter (method)
+        if (isset($url[1])) {
+            $methodName = $url[1];
+            $this->method = $this->controller->hasMethode($methodName) ? $methodName : DEFAULT_METHOD;
+            echo 'use method ' . $controllerName . '::' . $this->method;
         }
-
-        echo 'use method ' . $controllerName . '::' . $this->method;
     }
 
     /**
