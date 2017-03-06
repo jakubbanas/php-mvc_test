@@ -7,5 +7,8 @@ class Home extends Controller
         echo 'home';
     }
 
-    public function test(){}
+    public function test()
+    {
+    }
+
 }

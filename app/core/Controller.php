@@ -4,7 +4,6 @@ define('CONTROLLERS_PATH', __DIR__ . '/../controllers/');
 
 class Controller
 {
-
     /**
      * @param $name
      * @return bool
@@ -27,8 +26,14 @@ class Controller
      * @param $methodeName
      * @return bool
      */
-    final public function hasMethode($methodeName){
+    final public function hasMethode($methodeName)
+    {
         return method_exists($this, $methodeName);
+    }
+
+    public function getName()
+    {
+        return get_class($this);
     }
 
 }

@@ -6,40 +6,39 @@ define("DEFAULT_METHOD", "index");
 class App
 {
 
-    private $controller;
-    private $method;
+    private $controllerObj = DEFAULT_CONTROLLER;
+    private $method = DEFAULT_METHOD;
     private $params = [];
 
     protected function getController()
     {
-        return $this->controller;
+        return $this->controllerObj;
     }
 
     protected function setController($newController)
     {
-        return $this->controller = $newController;
+        return $this->controllerObj = $newController;
     }
 
     public function __construct()
     {
         //Get url parameters
-        $url = $this->parseUrl();
+        $url = $this->parseUrl() ?: [];
 
         //Parse first parameter (controller)
-        if (isset($url[0])) {
-            $controllerName = $url[0];
-            $this->controller = Controller::withNameExists($controllerName) ? $controllerName : DEFAULT_CONTROLLER;
-            require_once Controller::getControllerPathByName($this->controller);
+        if (array_key_exists(0, $url) && Controller::withNameExists($url[0])) {
+            $this->controllerObj = $url[0];
         }
 
-        $this->controller = new $this->controller;
+        require_once Controller::getControllerPathByName($this->controllerObj);
+
+        $this->controllerObj = new $this->controllerObj;
 
         //Parse second parameter (method)
-        if (isset($url[1])) {
-            $methodName = $url[1];
-            $this->method = $this->controller->hasMethode($methodName) ? $methodName : DEFAULT_METHOD;
-            echo 'use method ' . $controllerName . '::' . $this->method;
+        if (array_key_exists(1, $url) && $this->controllerObj->hasMethode($url[1])) {
+            $this->method = $url[1];
         }
+        echo 'use method ' . $this->controllerObj->getName() . '::' . $this->method;
     }
 
     /**
