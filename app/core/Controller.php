@@ -36,4 +36,9 @@ class Controller
         return get_class($this);
     }
 
+    public function model($model)
+    {
+        echo $model;
+    }
+
 }
